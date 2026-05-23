@@ -8,20 +8,19 @@ import (
 )
 
 func main() {
-	myCh1 := make(chan string)
 
-	res := load1(myCh1)
+	res := load1()
 
 	x := <-res
 	fmt.Println(x)
 
-	myCh2 := make(chan int)
-	myCh3:= make(chan int)
+	myCh1 := make(chan int)
+	myCh2:= make(chan int)
 
-	go write1(myCh2)
-	go write2(myCh3)
+	go write1(myCh1)
+	go write2(myCh2)
 
-	result := fanIn(myCh2, myCh3)
+	result := fanIn(myCh1, myCh2)
 
 	for {
 		x := <-result
@@ -29,14 +28,14 @@ func main() {
 	}
 
 }
-
-func load1(ch chan string) chan string {
+func load1() chan string {
+	res := make(chan string)
 	go func() {
 		fmt.Println("download the file, please wait")
 		time.Sleep(5 * time.Second)
-		ch <- "file is downloaded"
+	 	res <- "file is downloaded"
 	}()
-	return ch
+	return res
 }
 
 func write1(ch chan int) {
